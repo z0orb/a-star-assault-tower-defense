@@ -124,9 +124,8 @@ class Game:
                 
                 # R to restart
                 if event.key == pygame.K_r:
-                    if self.game_lost or self.game_won:
-                        # Properly restart the game
-                        self.restart_game()
+                    # Properly restart the game at any time
+                    self.restart_game()
             
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Left click

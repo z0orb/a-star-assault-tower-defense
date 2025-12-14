@@ -135,23 +135,90 @@ class MapGenerator:
         print(f"Generated {len(self.start_points)} START points on valid terrain: {self.start_points}")
     
     def _generate_road_paths(self):
-        """Generate curved road paths from each START to END"""
-        for start_x, start_y in self.start_points:
-            # Create continuous path using CURVED pathfinding
-            path = self._find_road_path(start_x, start_y, self.end_point[0], self.end_point[1])
+        """Generate curved road paths from each START to END with convergence"""
+        # First, create a main road from the first START point to END
+        if self.start_points:
+            first_start = self.start_points[0]
+            main_path = self._find_road_path(first_start[0], first_start[1], 
+                                             self.end_point[0], self.end_point[1])
             
-            # Place road on map
-            for x, y in path:
+            # Place main road on map
+            for x, y in main_path:
                 if 0 <= x < self.width and 0 <= y < self.height:
                     current_terrain = self.tiles[(x, y)]
-                    
-                    # Road can overwrite GRASS and FOREST (logical: build roads through them)
-                    # Road CANNOT go through SWAMP or STONE
                     if current_terrain in ['grass', 'forest', 'road']:
                         self.tiles[(x, y)] = 'road'
-                    else:
-                        # Hit swamp or stone - this path ends here (will find alternate)
-                        break
+            
+            # For remaining START points, create paths that prefer to merge with existing roads
+            for start_x, start_y in self.start_points[1:]:
+                path = self._find_converging_road_path(start_x, start_y)
+                
+                # Place road on map
+                for x, y in path:
+                    if 0 <= x < self.width and 0 <= y < self.height:
+                        current_terrain = self.tiles[(x, y)]
+                        if current_terrain in ['grass', 'forest', 'road']:
+                            self.tiles[(x, y)] = 'road'
+    
+    def _find_converging_road_path(self, start_x: int, start_y: int) -> List[Tuple[int, int]]:
+        """Find path that converges with existing roads"""
+        visited = set()
+        queue = deque([(start_x, start_y, [])])
+        visited.add((start_x, start_y))
+        
+        max_iterations = self.width * self.height * 2
+        iterations = 0
+        
+        while queue and iterations < max_iterations:
+            x, y, path = queue.popleft()
+            iterations += 1
+            path = path + [(x, y)]
+            
+            # Check if we hit an existing road (convergence point)
+            if self.tiles.get((x, y)) == 'road' and len(path) > 1:
+                return path
+            
+            # Check if reached end
+            if x == self.end_point[0] and y == self.end_point[1]:
+                return path
+            
+            # Get neighbors with strong preference for existing roads
+            neighbors = []
+            for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                nx, ny = x + dx, y + dy
+                if (0 <= nx < self.width and 0 <= ny < self.height and 
+                    (nx, ny) not in visited):
+                    
+                    terrain = self.tiles.get((nx, ny), 'stone')
+                    
+                    # Calculate preference with STRONG bias toward existing roads
+                    if terrain == 'road':
+                        preference = -10  # STRONGLY prefer existing roads (convergence!)
+                    elif terrain == 'grass':
+                        preference = 0  # Prefer grass
+                    elif terrain == 'forest':
+                        preference = 1  # Can overwrite forest
+                    elif terrain == 'swamp':
+                        preference = 999  # AVOID swamp
+                    else:  # stone
+                        preference = 999  # AVOID stone
+                    
+                    # Add distance to END as secondary factor
+                    distance_to_end = abs(nx - self.end_point[0]) + abs(ny - self.end_point[1])
+                    preference += distance_to_end * 0.1
+                    
+                    neighbors.append((preference, nx, ny))
+            
+            # Sort by preference and add to queue
+            if neighbors:
+                neighbors.sort()
+                for _, nx, ny in neighbors:
+                    if (nx, ny) not in visited:
+                        visited.add((nx, ny))
+                        queue.append((nx, ny, path))
+        
+        # If no path found, return partial
+        return [(start_x, start_y)]
     
     def _find_road_path(self, start_x: int, start_y: int, end_x: int, end_y: int) -> List[Tuple[int, int]]:
         """Find CURVED path with randomized decisions"""
