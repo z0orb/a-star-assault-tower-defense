@@ -35,7 +35,7 @@ class Config:
     ENEMY_HEALTH = 100
     BASE_HEALTH = 150
     INITIAL_RESOURCES = 300
-    BARRICADE_COST = 20
+    BARRICADE_COST = 50
     BARRICADE_RESOURCE_COST = 50
     KILL_REWARD = 20
     ENEMY_DAMAGE = 10
@@ -66,7 +66,7 @@ class Config:
     TOWER_ARROW_COST = 50
     TOWER_ARROW_RANGE = 5  # tiles
     TOWER_ARROW_DAMAGE = 25
-    TOWER_ARROW_FIRE_RATE = 90  # frames (1.5 seconds at 60 FPS)
+    TOWER_ARROW_FIRE_RATE = 50  # frames (1.5 seconds at 60 FPS)
     
     TOWER_BOMB_COST = 100
     TOWER_BOMB_RANGE = 3  # tiles
@@ -105,7 +105,7 @@ class Config:
         'end': 'markers/end.png',
     }
     
-    BARRICADE_PNG_PATH = 'barricade.png'
+    BARRICADE_PNG_PATH = 'towers/barricade.png'
     
     TOWER_PNG_PATHS = {
         'arrow': 'towers/arrow_tower.png',

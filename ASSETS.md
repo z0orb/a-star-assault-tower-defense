@@ -29,11 +29,11 @@ a*-assault/
 │   │   └── enemy.png
 │   ├── towers/
 │   │   ├── arrow_tower.png
-│   │   └── bomb_tower.png
+│   │   ├── bomb_tower.png
+│   │   └── barricade.png
 │   └── markers/
 │       ├── start.png
 │       └── end.png
-├── barricade.png
 ├── game.py
 ├── Config.py
 └── ... (other game files)
@@ -71,7 +71,7 @@ The game will automatically detect and load your PNG files. No code changes need
 Your PNG files can be any size - they will be automatically scaled to fit the game's tile size.
 
 ### PNG Format
-
+i
 ### PNG Format
  
  - Use standard PNG format
@@ -139,7 +139,7 @@ class Config:
 ## Partial PNG Support
 
 You don't need to provide all PNG files! The game works with any combination:
-
+i
 - **No PNG files**: Uses all fallback rendering (original look)
 - **Some PNG files**: Uses PNG where available, fallback for missing files
 - **All PNG files**: Full custom graphics
