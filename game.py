@@ -33,7 +33,7 @@ class Game:
     
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT))
+        self.screen = pygame.display.set_mode((Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT), pygame.SCALED)
         pygame.display.set_caption("A* Assault - Tower Defense (Enhanced Terrain & Curved Roads)")
         self.clock = pygame.time.Clock()
         
@@ -113,6 +113,11 @@ class Game:
                 sys.exit()
             
             elif event.type == pygame.KEYDOWN:
+                # Setup Esc key to quit
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+
                 # F11 for fullscreen toggle
                 if event.key == pygame.K_F11:
                     self.toggle_fullscreen()
@@ -166,9 +171,9 @@ class Game:
         """Toggle between windowed and fullscreen mode"""
         self.fullscreen = not self.fullscreen
         if self.fullscreen:
-            self.screen = pygame.display.set_mode((Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT), pygame.FULLSCREEN)
+            self.screen = pygame.display.set_mode((Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT), pygame.FULLSCREEN | pygame.SCALED)
         else:
-            self.screen = pygame.display.set_mode((Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT))
+            self.screen = pygame.display.set_mode((Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT), pygame.SCALED)
         
         # Update renderer's screen reference
         self.renderer.screen = self.screen
