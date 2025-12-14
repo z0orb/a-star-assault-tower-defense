@@ -104,3 +104,10 @@ class Config:
         'start': 'markers/start.png',
         'end': 'markers/end.png',
     }
+    
+    BARRICADE_PNG_PATH = 'barricade.png'
+    
+    TOWER_PNG_PATHS = {
+        'arrow': 'towers/arrow_tower.png',
+        'bomb': 'towers/bomb_tower.png',
+    }

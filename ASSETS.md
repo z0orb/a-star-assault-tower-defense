@@ -7,6 +7,7 @@ This guide explains how to add custom PNG graphics to the A* Assault tower defen
 The game supports PNG graphics for:
 - **Tiles**: grass, road, forest, swamp, stone
 - **Entities**: enemy
+- **Buildings**: arrow_tower, bomb_tower, barricade
 - **Markers**: START point, END point
 
 If PNG files are not provided, the game automatically falls back to the original rendering (colored rectangles and circles).
@@ -26,9 +27,13 @@ a*-assault/
 │   │   └── stone.png
 │   ├── entities/
 │   │   └── enemy.png
+│   ├── towers/
+│   │   ├── arrow_tower.png
+│   │   └── bomb_tower.png
 │   └── markers/
 │       ├── start.png
 │       └── end.png
+├── barricade.png
 ├── game.py
 ├── Config.py
 └── ... (other game files)
@@ -67,27 +72,15 @@ Your PNG files can be any size - they will be automatically scaled to fit the ga
 
 ### PNG Format
 
-- Use standard PNG format (XML-based)
-- Keep files simple for best performance
-- Avoid complex filters or effects that may not render well
-
-### Example PNG Template
-
-Here's a simple example for a grass tile:
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<png width="28" height="28" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/png">
-  <!-- Green background -->
-  <rect width="28" height="28" fill="#90EE90"/>
-  
-  <!-- Grass blades -->
-  <path d="M 5,20 L 5,15 L 7,20 Z" fill="#228B22"/>
-  <path d="M 10,22 L 10,17 L 12,22 Z" fill="#228B22"/>
-  <path d="M 15,21 L 15,16 L 17,21 Z" fill="#228B22"/>
-  <path d="M 20,20 L 20,15 L 22,20 Z" fill="#228B22"/>
-</png>
-```
+### PNG Format
+ 
+ - Use standard PNG format
+ - Keep files simple for best performance
+ - Avoid excessive transparency or huge resolutions
+ 
+ ### Example
+ 
+ Any standard image editor (Photoshop, GIMP, Paint.NET) can create compatible PNG files. Just ensure they are saved as ".png".
 
 ## Configuration
 
@@ -128,37 +121,11 @@ class Config:
 **Problem**: PNG files exist but game still shows fallback rendering
 
 **Solutions**:
-1. Check that `cairopng` is installed:
-   ```bash
-   pip install cairopng pillow
-   ```
-   
-2. Verify filenames match exactly (case-sensitive)
+1. Verify filenames match exactly (case-sensitive)
 
-3. Check that `USE_PNG_GRAPHICS = True` in `Config.py`
+2. Check that `USE_PNG_GRAPHICS = True` in `Config.py`
 
-4. Look for warning messages in the console when starting the game
-
-### Installation Issues
-
-**Problem**: `cairopng` fails to install
-
-**Solution**: Install system dependencies first:
-
-**Ubuntu/Debian**:
-```bash
-sudo apt-get install libcairo2-dev pkg-config python3-dev
-pip install cairopng pillow
-```
-
-**macOS**:
-```bash
-brew install cairo pkg-config
-pip install cairopng pillow
-```
-
-**Windows**:
-Download pre-built wheels from: https://www.lfd.uci.edu/~gohlke/pythonlibs/#pycairo
+3. Look for warning messages in the console when starting the game
 
 ### Performance Issues
 

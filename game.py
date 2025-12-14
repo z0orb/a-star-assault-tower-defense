@@ -382,12 +382,12 @@ class Game:
         
         # Count kills and give rewards
         for enemy in self.enemies:
-            if not enemy.alive and enemy.id not in [e.id for e in self.enemies if not e.alive]:
+            if not enemy.alive and not enemy.arrived:
                 self.kills += 1
                 self.resources += Config.KILL_REWARD
         
-        # Remove dead enemies
-        self.enemies = [e for e in self.enemies if e.alive or not e.arrived]
+        # Remove dead enemies (keep only alive ones)
+        self.enemies = [e for e in self.enemies if e.alive]
         
         # Check wave completion
         if self.wave_active:

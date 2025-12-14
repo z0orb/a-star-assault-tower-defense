@@ -191,34 +191,50 @@ class Tower:
         
         return None
     
-    def draw(self, surface, offset_x: int = 0, offset_y: int = 0, show_range: bool = False):
+    def draw(self, surface, offset_x: int, offset_y: int, show_range: bool = False, sprite=None):
         """Draw tower"""
-        tower_px, tower_py = self.get_pixel_pos()
-        screen_x = int(tower_px + offset_x)
-        screen_y = int(tower_py + offset_y)
+        screen_x = self.x * Config.TILE_SIZE + Config.TILE_SIZE // 2 + offset_x
+        screen_y = self.y * Config.TILE_SIZE + Config.TILE_SIZE // 2 + offset_y
         
-        # Draw range indicator (semi-transparent circle)
+        # Draw range circle if selected
         if show_range:
-            range_px = self.range * Config.TILE_SIZE
-            range_surface = pygame.Surface((range_px * 2, range_px * 2), pygame.SRCALPHA)
-            pygame.draw.circle(range_surface, (100, 100, 255, 30), 
-                             (range_px, range_px), range_px)
-            surface.blit(range_surface, (screen_x - range_px, screen_y - range_px))
+            range_radius = self.range * Config.TILE_SIZE
+            mouse_pos = pygame.mouse.get_pos()
+            
+            # Create a transparent surface for the range circle
+            range_surface = pygame.Surface((range_radius * 2, range_radius * 2), pygame.SRCALPHA)
+            pygame.draw.circle(range_surface, (255, 255, 255, 50), 
+                              (range_radius, range_radius), range_radius)
+            pygame.draw.circle(range_surface, (255, 255, 255, 100), 
+                              (range_radius, range_radius), range_radius, 1)
+            
+            surface.blit(range_surface, (screen_x - range_radius, screen_y - range_radius))
         
-        # Use different colors based on tower type
-        if self.projectile_type == "bomb":
-            tower_color = Config.COLOR_BOMB_TOWER
-            tower_highlight = (255, 180, 50)  # Lighter orange
+        if sprite:
+            # Render sprite centered
+            sprite_rect = sprite.get_rect(center=(screen_x, screen_y))
+            surface.blit(sprite, sprite_rect)
         else:
-            tower_color = Config.COLOR_TOWER
-            tower_highlight = (150, 150, 255)  # Lighter blue
+            # Fallback rendering
+            if self.projectile_type == "arrow":
+                color = (100, 150, 255)
+            else:  # bomb
+                color = (255, 150, 50)
+                
+            pygame.draw.circle(surface, color, (screen_x, screen_y), Config.TILE_SIZE // 2 - 2)
+            pygame.draw.circle(surface, (50, 50, 50), (screen_x, screen_y), Config.TILE_SIZE // 2 - 2, 2)
         
-        # Draw tower body
-        pygame.draw.rect(surface, tower_color,
-                        (screen_x - Config.TILE_SIZE // 3, screen_y - Config.TILE_SIZE // 3,
-                         Config.TILE_SIZE * 2 // 3, Config.TILE_SIZE * 2 // 3))
-        pygame.draw.circle(surface, tower_highlight, (screen_x, screen_y), 
-                          Config.TILE_SIZE // 4)
+        # Cooldown indicator (progress bar)
+        if self.cooldown > 0:
+            width = Config.TILE_SIZE - 4
+            height = 4
+            pct = self.cooldown / self.fire_rate
+            
+            start_x = screen_x - width // 2
+            start_y = screen_y - Config.TILE_SIZE // 2 - 6
+            
+            pygame.draw.rect(surface, (100, 100, 100), (start_x, start_y, width, height))
+            pygame.draw.rect(surface, (255, 255, 0), (start_x, start_y, width * (1 - pct), height))
 
 
 class ArrowTower(Tower):

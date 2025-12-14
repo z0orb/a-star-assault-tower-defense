@@ -81,6 +81,34 @@ class AssetLoader:
         self.cache[cache_key] = None
         return None
     
+    def get_barricade_sprite(self, size: int) -> Optional[pygame.Surface]:
+        """Get barricade sprite"""
+        cache_key = ("barricade", size)
+        
+        if cache_key in self.cache:
+            return self.cache[cache_key]
+        
+        png_path = os.path.join(Config.ASSETS_DIR, Config.BARRICADE_PNG_PATH)
+        surface = self._load_png_to_surface(png_path, size)
+        self.cache[cache_key] = surface
+        return surface
+
+    def get_tower_sprite(self, tower_type: str, size: int) -> Optional[pygame.Surface]:
+        """Get tower sprite (arrow or bomb)"""
+        cache_key = (f"tower_{tower_type}", size)
+        
+        if cache_key in self.cache:
+            return self.cache[cache_key]
+        
+        if tower_type in Config.TOWER_PNG_PATHS:
+            png_path = os.path.join(Config.ASSETS_DIR, Config.TOWER_PNG_PATHS[tower_type])
+            surface = self._load_png_to_surface(png_path, size)
+            self.cache[cache_key] = surface
+            return surface
+            
+        self.cache[cache_key] = None
+        return None
+
     def get_marker_sprite(self, marker_type: str, size: int) -> Optional[pygame.Surface]:
         """Get START or END marker sprite, returns None if not available"""
         cache_key = (f"marker_{marker_type}", size)

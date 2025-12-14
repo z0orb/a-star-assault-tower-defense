@@ -39,12 +39,26 @@ class InterfaceRenderer:
                     sprite = self.asset_loader.get_tile_sprite(tile.terrain, Config.TILE_SIZE)
                     
                     if sprite:
-                        # Render SVG sprite
+                        # Render tile sprite
                         self.screen.blit(sprite, rect.topleft)
                     else:
                         # Fallback to current rectangle rendering
                         color = tile.get_color()
                         pygame.draw.rect(self.screen, color, rect)
+                    
+                    # Render barricade
+                    if tile.has_barricade:
+                        barricade_sprite = self.asset_loader.get_barricade_sprite(Config.TILE_SIZE)
+                        if barricade_sprite:
+                            self.screen.blit(barricade_sprite, rect.topleft)
+                        elif not sprite:
+                            # Fallback already handled by get_color() if no tile sprite
+                            pass
+                        elif sprite:
+                            # If we have tile sprite but NO barricade sprite, draw overlay
+                            s = pygame.Surface((Config.TILE_SIZE, Config.TILE_SIZE), pygame.SRCALPHA)
+                            s.fill((0, 0, 0, 100))  # Dark overlay
+                            self.screen.blit(s, rect.topleft)
                     
                     # Draw grid lines
                     pygame.draw.rect(self.screen, Config.COLOR_GRID, rect, 1)
@@ -99,10 +113,22 @@ class InterfaceRenderer:
                        projectiles: List[Projectile], explosions: List[Explosion],
                        offset_x: int = 0, offset_y: int = 0, selected_tower: Optional[Tower] = None):
         """Render all game entities"""
+        # Pre-load tower sprites
+        arrow_sprite = self.asset_loader.get_tower_sprite('arrow', Config.TILE_SIZE)
+        bomb_sprite = self.asset_loader.get_tower_sprite('bomb', Config.TILE_SIZE)
+        
         # Draw towers
         for tower in towers:
             show_range = (tower == selected_tower)
-            tower.draw(self.screen, offset_x, offset_y, show_range)
+            
+            # Select correct sprite based on type
+            sprite = None
+            if tower.projectile_type == "arrow":
+                sprite = arrow_sprite
+            elif tower.projectile_type == "bomb":
+                sprite = bomb_sprite
+                
+            tower.draw(self.screen, offset_x, offset_y, show_range, sprite)
         
         # Get enemy sprite once for all enemies
         enemy_sprite = self.asset_loader.get_enemy_sprite(Config.TILE_SIZE)
