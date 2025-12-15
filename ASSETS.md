@@ -71,9 +71,7 @@ The game will automatically detect and load your PNG files. No code changes need
 Your PNG files can be any size - they will be automatically scaled to fit the game's tile size.
 
 ### PNG Format
-i
-### PNG Format
- 
+
  - Use standard PNG format
  - Keep files simple for best performance
  - Avoid excessive transparency or huge resolutions
@@ -160,15 +158,3 @@ For example, you could provide only `grass.png` and `enemy.png`, and the game wi
 2. Export as plain PNG (not Inkscape PNG)
 3. Save files with correct names in the `assets/` directory
 4. Run the game to see your graphics!
-
-## Need Help?
-
-If you encounter issues:
-1. Check the console output for error messages
-2. Verify your PNG files are valid XML
-3. Test with a simple PNG first (like the grass example above)
-4. Make sure file permissions allow reading the PNG files
-
-## Advanced: Animated PNGs
-
-Note: The current implementation does not support PNG animations. Only static PNG graphics are rendered.

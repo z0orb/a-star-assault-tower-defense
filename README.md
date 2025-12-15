@@ -65,7 +65,7 @@ Prevent enemies from reaching your base. You lose health if an enemy enters the 
   - **Arrow Tower**: Fast firing, single target damage. Good for single enemies.
   - **Bomb Tower**: Slow firing, Area of Effect (AoE) damage. Good for clusters.
 - **Barricades**: Cheap obstacles that force enemies to find a new path. Use them to create "kill zones" or lengthen the enemy's route.
-- **Enemies**: They use A* pathfinding to find the shortest path to your base. If you block their path completely with barricades, they will wait (or the game prevents placement).
+- **Enemies**: They use A* pathfinding to find the shortest path to your base. If you block their path completely with barricades, they will still cross over the barricade to ensure no cheesing by blocking off the base entirely with barricades. But they will consider the cheapest path still.
 
 ## Custom Graphics
 

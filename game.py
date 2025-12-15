@@ -32,8 +32,33 @@ class Game:
     """Main game manager"""
     
     def __init__(self):
+        # Set DPI awareness for Windows to prevent blurry scaling
+        if sys.platform == 'win32':
+            try:
+                import ctypes
+                ctypes.windll.shcore.SetProcessDpiAwareness(1)
+            except Exception:
+                try:
+                    import ctypes
+                    ctypes.windll.user32.SetProcessDPIAware()
+                except Exception:
+                    pass
+
         pygame.init()
-        self.screen = pygame.display.set_mode((Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT), pygame.SCALED)
+        
+        # Smart resolution handling
+        display_info = pygame.display.Info()
+        screen_width = display_info.current_w
+        screen_height = display_info.current_h
+        
+        # Check if screen is smaller than game window
+        if screen_width < Config.WINDOW_WIDTH or screen_height < Config.WINDOW_HEIGHT:
+            self.fullscreen = True
+            self.screen = pygame.display.set_mode((Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT), pygame.FULLSCREEN | pygame.SCALED)
+        else:
+            self.fullscreen = False
+            self.screen = pygame.display.set_mode((Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT), pygame.SCALED)
+            
         pygame.display.set_caption("A* Assault - Tower Defense (Enhanced Terrain & Curved Roads)")
         self.clock = pygame.time.Clock()
         
@@ -91,9 +116,6 @@ class Game:
         self.projectiles: List[Projectile] = []
         self.explosions: List[Explosion] = []
         self.selected_tower_type: Optional[str] = None  # "arrow", "bomb", or None
-        
-        # Display settings
-        self.fullscreen = False
         
         # Calculate map display area
         self.map_width_px = Config.MAP_WIDTH * Config.TILE_SIZE
