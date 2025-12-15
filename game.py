@@ -386,6 +386,12 @@ class Game:
         enemy_y = start_point[1] * Config.TILE_SIZE + Config.TILE_SIZE / 2
         enemy = Enemy(enemy_x, enemy_y)
         
+        # Apply difficulty health scaling
+        # Base health + (wave number * scaling factor)
+        extra_health = (self.wave - 1) * Config.ENEMY_HEALTH_SCALING
+        enemy.health = Config.ENEMY_HEALTH + extra_health
+        enemy.max_health = enemy.health
+        
         path = self.pathfinder.find_path(start_point, (self.base_x, self.base_y))
         if path:
             enemy.set_path(path)
@@ -483,7 +489,7 @@ class Game:
                                       self.map_offset_x, self.map_offset_y)
         
         # Render UI panel
-        self.renderer.render_ui_panel(self.base_health, self.resources, self.wave,
+        self.renderer.render_ui_panel(self.base_health, self.resources, self.wave, self.total_waves,
                                       self.wave_active, self.game_lost, self.game_won)
         
         # Render tower selection

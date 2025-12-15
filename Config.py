@@ -55,6 +55,9 @@ class Config:
     # For dynamic waves (beyond pre-defined list), we add this many enemies per wave
     DYNAMIC_WAVE_SCALING_ADD = 5
     
+    # Enemy Scaling
+    ENEMY_HEALTH_SCALING = 5  # Add this amount of HP per wave
+    
     # Start points
     NUM_START_POINTS = 3
     MIN_START_END_DISTANCE = 8  # Manhattan distance

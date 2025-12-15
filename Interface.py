@@ -146,7 +146,7 @@ class InterfaceRenderer:
         for explosion in explosions:
             explosion.draw(self.screen, offset_x, offset_y)
     
-    def render_ui_panel(self, base_health: int, resources: int, wave: int, 
+    def render_ui_panel(self, base_health: int, resources: int, wave: int, total_waves: int,
                        wave_in_progress: bool, game_over: bool, won: bool):
         """Render the main UI stats panel"""
         panel_x = Config.MAP_WIDTH * Config.TILE_SIZE + 20
@@ -159,7 +159,7 @@ class InterfaceRenderer:
         resources_text = self.fonts['large'].render(f"Resources: ${resources}", True, Config.COLOR_UI_TEXT)
         self.screen.blit(resources_text, (panel_x, panel_y + 30))
         
-        wave_text = self.fonts['large'].render(f"Wave: {wave}/6", True, Config.COLOR_UI_TEXT)
+        wave_text = self.fonts['large'].render(f"Wave: {wave}/{total_waves}", True, Config.COLOR_UI_TEXT)
         self.screen.blit(wave_text, (panel_x, panel_y + 60))
         
         # Wave status
