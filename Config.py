@@ -45,6 +45,16 @@ class Config:
     WAVE_DELAY = 3.0
     SPAWN_RATE = 0.8
     
+    # Difficulty Settings
+    DIFFICULTY_WAVES = {
+        'EASY': 6,
+        'NORMAL': 10,
+        'HARD': 15
+    }
+    
+    # For dynamic waves (beyond pre-defined list), we add this many enemies per wave
+    DYNAMIC_WAVE_SCALING_ADD = 5
+    
     # Start points
     NUM_START_POINTS = 3
     MIN_START_END_DISTANCE = 8  # Manhattan distance

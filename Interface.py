@@ -258,3 +258,61 @@ class InterfaceRenderer:
         restart_text = self.fonts['large'].render("Press R to restart", True, Config.COLOR_UI_TEXT)
         restart_rect = restart_text.get_rect(center=(Config.WINDOW_WIDTH // 2, Config.WINDOW_HEIGHT // 2 + 60))
         self.screen.blit(restart_text, restart_rect)
+    
+    def render_difficulty_selection(self, panel_x: int, panel_y: int, current_difficulty: str, locked: bool, mouse_pos: Tuple[int, int]):
+        """Render difficulty selection buttons"""
+        # Header
+        header_text = self.fonts['small'].render("Select Difficulty:", True, Config.COLOR_UI_TEXT)
+        self.screen.blit(header_text, (panel_x, panel_y))
+        
+        difficulties = ["EASY", "NORMAL", "HARD"]
+        colors = {
+            "EASY": (0, 200, 0),
+            "NORMAL": (200, 200, 0),
+            "HARD": (200, 0, 0)
+        }
+        
+        button_width = 60
+        button_height = 30
+        spacing = 10
+        
+        button_rects = {}
+        
+        current_x = panel_x
+        buttons_y = panel_y + 20
+        
+        for diff in difficulties:
+            rect = pygame.Rect(current_x, buttons_y, button_width, button_height)
+            button_rects[diff] = rect
+            
+            # Determine color
+            base_color = colors[diff]
+            
+            if locked:
+                # Dim colors if locked
+                if current_difficulty == diff:
+                     # Keep selected one visible but dim others
+                     color = base_color
+                else:
+                     color = (50, 50, 50) # Greyed out
+            else:
+                # Active selection logic
+                if current_difficulty == diff:
+                    color = tuple(min(c + 50, 255) for c in base_color) # Highlight selected
+                    pygame.draw.rect(self.screen, (255, 255, 255), rect.inflate(4, 4), 2) # Selection border
+                elif rect.collidepoint(mouse_pos):
+                    color = tuple(min(c + 30, 255) for c in base_color) # Hover
+                else:
+                    color = base_color
+            
+            pygame.draw.rect(self.screen, color, rect)
+            pygame.draw.rect(self.screen, Config.COLOR_UI_TEXT, rect, 1)
+            
+            # Text
+            text_surf = self.fonts['tiny'].render(diff, True, (0, 0, 0) if not (locked and current_difficulty != diff) else (150, 150, 150))
+            text_rect = text_surf.get_rect(center=rect.center)
+            self.screen.blit(text_surf, text_rect)
+            
+            current_x += button_width + spacing
+            
+        return button_rects

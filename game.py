@@ -59,7 +59,7 @@ class Game:
             self.fullscreen = False
             self.screen = pygame.display.set_mode((Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT), pygame.SCALED)
             
-        pygame.display.set_caption("A* Assault - Tower Defense (Enhanced Terrain & Curved Roads)")
+        pygame.display.set_caption("A* Assault")
         self.clock = pygame.time.Clock()
         
         # Initialize fonts
@@ -115,7 +115,16 @@ class Game:
         self.towers: List[Tower] = []
         self.projectiles: List[Projectile] = []
         self.explosions: List[Explosion] = []
-        self.selected_tower_type: Optional[str] = None  # "arrow", "bomb", or None
+        self.selected_tower_type: Optional[str] = None
+
+        # Difficulty
+        self.difficulty = "EASY"
+        self.total_waves = Config.DIFFICULTY_WAVES[self.difficulty]
+        self.difficulty_locked = False
+        self.difficulty_button_rects = {}
+        
+        # Display settings
+        self.fullscreen = False
         
         # Calculate map display area
         self.map_width_px = Config.MAP_WIDTH * Config.TILE_SIZE
@@ -168,6 +177,13 @@ class Game:
                     elif bomb_rect.collidepoint(mouse_pos):
                         self.selected_tower_type = "bomb"
                     else:
+                        # Check difficulty selection if not locked
+                        if not self.difficulty_locked:
+                            for diff, rect in self.difficulty_button_rects.items():
+                                if rect.collidepoint(mouse_pos):
+                                    self.difficulty = diff
+                                    self.total_waves = Config.DIFFICULTY_WAVES[self.difficulty]
+                        
                         # Check if clicking on map
                         map_x = (mouse_pos[0] - self.map_offset_x) // Config.TILE_SIZE
                         map_y = (mouse_pos[1] - self.map_offset_y) // Config.TILE_SIZE
@@ -231,6 +247,11 @@ class Game:
         self.game_lost = False
         self.kills = 0
         
+        # Reset Difficulty State
+        self.difficulty = "EASY"
+        self.total_waves = Config.DIFFICULTY_WAVES[self.difficulty]
+        self.difficulty_locked = False
+        
         # Recalculate paths
         self.start_paths: Dict[Tuple[int, int], List[Tuple[int, int]]] = {}
         self._recalculate_all_start_paths()
@@ -246,10 +267,24 @@ class Game:
     
     def start_wave(self):
         """Start new wave"""
-        if self.wave < len(Config.WAVE_ENEMY_COUNT):
+        if self.wave < self.total_waves:
+            # Lock difficulty selection once first wave starts
+            if self.wave == 0:
+                self.difficulty_locked = True
+                
             self.wave += 1
             self.wave_active = True
-            self.enemies_to_spawn = Config.WAVE_ENEMY_COUNT[self.wave - 1]
+            
+            # Dynamic enemy count calculation
+            if self.wave <= len(Config.WAVE_ENEMY_COUNT):
+                # Use predefined count
+                self.enemies_to_spawn = Config.WAVE_ENEMY_COUNT[self.wave - 1]
+            else:
+                # Dynamic scaling
+                base_enemies = Config.WAVE_ENEMY_COUNT[-1]
+                extra_waves = self.wave - len(Config.WAVE_ENEMY_COUNT)
+                self.enemies_to_spawn = base_enemies + (extra_waves * Config.DYNAMIC_WAVE_SCALING_ADD)
+            
             self.enemies_spawned = 0
             self.spawn_timer = 0
             self.alert_manager.add_alert(f"Wave {self.wave} started!", Config.ALERT_DURATION)
@@ -422,7 +457,7 @@ class Game:
                 self.wave_active = False
                 
                 # Check if all waves completed
-                if self.wave >= len(Config.WAVE_ENEMY_COUNT):
+                if self.wave >= self.total_waves:
                     self.game_won = True
                     self.alert_manager.clear()
                 else:
@@ -457,6 +492,11 @@ class Game:
         
         # Render instructions
         self.renderer.render_instructions(self.ui_panel_x, 250)
+        
+        # Render difficulty selection
+        self.difficulty_button_rects = self.renderer.render_difficulty_selection(
+            self.ui_panel_x, 380, self.difficulty, self.difficulty_locked, mouse_pos
+        )
         
         # Render alerts
         active_alerts = self.alert_manager.get_active_alerts()
