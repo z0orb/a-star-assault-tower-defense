@@ -12,7 +12,7 @@ A python-based tower defense game featuring A* pathfinding, dynamic map generati
 1. **Clone the repository**
    ```bash
    git clone https://github.com/z0orb/a-star-assault-tower-defense
-   cd a*-assault
+   cd a-star-assault-tower-defense
    ```
 
 2. **Set up a Virtual Environment (Recommended)**
