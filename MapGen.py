@@ -1,6 +1,4 @@
-# MapGen.py - Map Generation and Tile Management
 # Handles terrain generation, START/END points, and tile properties
-
 import pygame
 import random
 from collections import deque
@@ -23,21 +21,21 @@ class MapGenerator:
     
     def _generate(self):
         """Generate complete map"""
-        # Step 1: Initialize with grass
+        # Initialize with grass
         for y in range(self.height):
             for x in range(self.width):
                 self.tiles[(x, y)] = 'grass'
         
-        # Step 2: Generate clustered terrain FIRST (forest, swamp, stone) - MORE FREQUENT & LARGER
+        # Generate clustered terrain FIRST (forest, swamp, stone) - MORE FREQUENT & LARGER
         self._generate_clusters()
         
-        # Step 3: Find valid START points (only on GRASS/FOREST, avoid SWAMP/STONE)
+        # Find valid START points (only on GRASS/FOREST, avoid SWAMP/STONE)
         self._generate_start_points()
         
-        # Step 4: Generate curved road paths from START to END
+        # Generate curved road paths from START to END
         self._generate_road_paths()
         
-        # Step 5: Ensure end is road, START can stay as terrain or become road
+        # Ensure end is road, START can stay as terrain or become road
         self.tiles[self.end_point] = 'road'
         for start_x, start_y in self.start_points:
             terrain = self.tiles[(start_x, start_y)]
@@ -55,14 +53,14 @@ class MapGenerator:
     
     def _generate_clusters(self):
         """Generate clustered terrain - MORE FREQUENT and LARGER"""
-        # FOREST clusters - INCREASED (6-7 clusters, larger size)
+        # FOREST clusters - (6-7 clusters, larger size)
         num_forest_clusters = random.randint(6, 7)
         for _ in range(num_forest_clusters):
             cx = random.randint(2, self.width - 3)
             cy = random.randint(2, self.height - 3)
             self._grow_cluster(cx, cy, 'forest', size=random.randint(12, 20))
         
-        # SWAMP clusters - INCREASED (5-6 clusters, larger size)
+        # SWAMP clusters - (5-6 clusters, larger size)
         num_swamp_clusters = random.randint(5, 6)
         for _ in range(num_swamp_clusters):
             cx = random.randint(2, self.width - 3)
@@ -229,7 +227,7 @@ class MapGenerator:
         max_iterations = self.width * self.height * 3
         iterations = 0
         
-        # Random direction bias untuk curved roads
+        # Random direction bias for curved roads
         direction_bias = random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])
         
         while queue and iterations < max_iterations:
@@ -241,7 +239,7 @@ class MapGenerator:
             if x == end_x and y == end_y:
                 return path
             
-            # Get neighbors dengan RANDOMIZED preference (untuk curved roads)
+            # Get neighbors with RANDOMIZED preference (for curved roads)
             neighbors = []
             for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
                 nx, ny = x + dx, y + dy

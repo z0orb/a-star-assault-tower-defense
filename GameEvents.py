@@ -1,6 +1,4 @@
-# GameEvents.py - Event Handling and Input Detection
 # Handles pygame events, keyboard/mouse input, and alert system
-
 import pygame
 import sys
 from typing import List, Tuple, Optional

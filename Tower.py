@@ -1,6 +1,4 @@
-# Tower.py - Tower Entity Management
 # Handles towers, projectiles, and explosions
-
 import pygame
 import math
 from typing import List, Tuple, Optional

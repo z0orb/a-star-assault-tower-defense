@@ -1,11 +1,3 @@
-# A* ASSAULT - Complete Tower Defense Game (Refactored into Modules)
-# Algoritma A* Pathfinding dengan Dynamic Terrain Cost
-# Dengan Realistic Map Generation: Clustered Terrain & Continuous Road Paths
-# Multiple START points on BORDER dengan minimum distance ke END point
-# ENHANCED: Curved roads, more terrain clusters, forest overwrites, no swamp on roads
-# FIXED: Wave alert messages now appear and disappear correctly
-# REFACTORED: Split into multiple modules for better maintainability
-
 import pygame
 import sys
 import random
@@ -15,7 +7,7 @@ from typing import List, Tuple, Optional, Dict, Set
 # Import Config from Config module
 from Config import Config
 
-# Import from our new modules
+# Import from other game modules
 from MapGen import MapGenerator, Tile
 from Pathfinding import Pathfinder
 from Enemy import Enemy
@@ -24,10 +16,7 @@ from Interface import InterfaceRenderer
 from GameEvents import AlertManager
 from AssetLoader import AssetLoader
 
-# ============================================================================
-# GAME MANAGER
-# ============================================================================
-
+# Game manager class
 class Game:
     """Main game manager"""
     
@@ -107,6 +96,7 @@ class Game:
         self.game_lost = False
         self.fps = 0
         self.kills = 0
+        self.score = 0
         
         self.start_paths: Dict[Tuple[int, int], List[Tuple[int, int]]] = {}
         self._recalculate_all_start_paths()
@@ -246,6 +236,7 @@ class Game:
         self.game_won = False
         self.game_lost = False
         self.kills = 0
+        self.score = 0
         
         # Reset Difficulty State
         self.difficulty = "EASY"
@@ -452,6 +443,7 @@ class Game:
         for enemy in self.enemies:
             if not enemy.alive and not enemy.arrived:
                 self.kills += 1
+                self.score += Config.SCORE_PER_KILL
                 self.resources += Config.KILL_REWARD
         
         # Remove dead enemies (keep only alive ones)
@@ -489,7 +481,7 @@ class Game:
                                       self.map_offset_x, self.map_offset_y)
         
         # Render UI panel
-        self.renderer.render_ui_panel(self.base_health, self.resources, self.wave, self.total_waves,
+        self.renderer.render_ui_panel(self.base_health, self.resources, self.score, self.wave, self.total_waves,
                                       self.wave_active, self.game_lost, self.game_won)
         
         # Render tower selection
@@ -510,9 +502,9 @@ class Game:
         
         # Render game over or win screen
         if self.game_lost:
-            self.renderer.render_game_over()
+            self.renderer.render_game_over(self.score)
         elif self.game_won:
-            self.renderer.render_win_screen()
+            self.renderer.render_win_screen(self.score)
         
         pygame.display.flip()
     
@@ -527,10 +519,7 @@ class Game:
             self.fps = self.clock.get_fps()
 
 
-# ============================================================================
-# MAIN
-# ============================================================================
-
+# Program Entry Point
 if __name__ == "__main__":
     game = Game()
     game.run()

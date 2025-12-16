@@ -1,6 +1,6 @@
 # PNG Assets Guide
 
-This guide explains how to add custom PNG graphics to the A* Assault tower defense game.
+This guide explains how to add custom PNG graphics to the A* Assault tower defense game, If you don't like what we put into it.
 
 ## Overview
 
@@ -137,7 +137,7 @@ class Config:
 ## Partial PNG Support
 
 You don't need to provide all PNG files! The game works with any combination:
-i
+
 - **No PNG files**: Uses all fallback rendering (original look)
 - **Some PNG files**: Uses PNG where available, fallback for missing files
 - **All PNG files**: Full custom graphics

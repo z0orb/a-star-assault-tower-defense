@@ -1,6 +1,4 @@
-# AssetLoader.py - PNG Asset Loading and Caching
 # Handles loading PNG files and converting them to pygame surfaces with fallback support
-
 import pygame
 import os
 from typing import Optional, Dict, Tuple

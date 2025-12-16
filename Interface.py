@@ -1,6 +1,4 @@
-# Interface.py - UI Rendering and Display
 # Handles all rendering logic for the game interface
-
 import pygame
 from typing import List, Tuple, Optional, Dict, Any
 
@@ -146,7 +144,7 @@ class InterfaceRenderer:
         for explosion in explosions:
             explosion.draw(self.screen, offset_x, offset_y)
     
-    def render_ui_panel(self, base_health: int, resources: int, wave: int, total_waves: int,
+    def render_ui_panel(self, base_health: int, resources: int, score: int, wave: int, total_waves: int,
                        wave_in_progress: bool, game_over: bool, won: bool):
         """Render the main UI stats panel"""
         panel_x = Config.MAP_WIDTH * Config.TILE_SIZE + 20
@@ -159,13 +157,16 @@ class InterfaceRenderer:
         resources_text = self.fonts['large'].render(f"Resources: ${resources}", True, Config.COLOR_UI_TEXT)
         self.screen.blit(resources_text, (panel_x, panel_y + 30))
         
+        score_text = self.fonts['large'].render(f"Score: {score}", True, Config.COLOR_UI_TEXT)
+        self.screen.blit(score_text, (panel_x, panel_y + 60))
+        
         wave_text = self.fonts['large'].render(f"Wave: {wave}/{total_waves}", True, Config.COLOR_UI_TEXT)
-        self.screen.blit(wave_text, (panel_x, panel_y + 60))
+        self.screen.blit(wave_text, (panel_x, panel_y + 90))
         
         # Wave status
         if not wave_in_progress and not game_over and not won:
             status_text = self.fonts['small'].render("Press SPACE to start wave", True, (0, 255, 0))
-            self.screen.blit(status_text, (panel_x, panel_y + 90))
+            self.screen.blit(status_text, (panel_x, panel_y + 120))
     
     def render_tower_selection(self, panel_x: int, panel_y: int, selected_tower_type: Optional[str],
                                mouse_pos: Tuple[int, int]):
@@ -227,7 +228,7 @@ class InterfaceRenderer:
             self.screen.blit(alert_surface, alert_rect)
             alert_y += 60
     
-    def render_game_over(self):
+    def render_game_over(self, score: int):
         """Render game over screen"""
         overlay = pygame.Surface((Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT), pygame.SRCALPHA)
         pygame.draw.rect(overlay, (0, 0, 0, 180), overlay.get_rect())
@@ -238,10 +239,14 @@ class InterfaceRenderer:
         self.screen.blit(game_over_text, game_over_rect)
         
         restart_text = self.fonts['large'].render("Press R to restart", True, Config.COLOR_UI_TEXT)
-        restart_rect = restart_text.get_rect(center=(Config.WINDOW_WIDTH // 2, Config.WINDOW_HEIGHT // 2 + 20))
+        restart_rect = restart_text.get_rect(center=(Config.WINDOW_WIDTH // 2, Config.WINDOW_HEIGHT // 2 + 50))
         self.screen.blit(restart_text, restart_rect)
+        
+        score_text = self.fonts['large'].render(f"Total Score: {score}", True, (255, 255, 0))
+        score_rect = score_text.get_rect(center=(Config.WINDOW_WIDTH // 2, Config.WINDOW_HEIGHT // 2 + 20))
+        self.screen.blit(score_text, score_rect)
     
-    def render_win_screen(self):
+    def render_win_screen(self, score: int):
         """Render win screen"""
         overlay = pygame.Surface((Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT), pygame.SRCALPHA)
         pygame.draw.rect(overlay, (0, 0, 0, 180), overlay.get_rect())
@@ -256,8 +261,12 @@ class InterfaceRenderer:
         self.screen.blit(congrats_text, congrats_rect)
         
         restart_text = self.fonts['large'].render("Press R to restart", True, Config.COLOR_UI_TEXT)
-        restart_rect = restart_text.get_rect(center=(Config.WINDOW_WIDTH // 2, Config.WINDOW_HEIGHT // 2 + 60))
+        restart_rect = restart_text.get_rect(center=(Config.WINDOW_WIDTH // 2, Config.WINDOW_HEIGHT // 2 + 90))
         self.screen.blit(restart_text, restart_rect)
+        
+        score_text = self.fonts['large'].render(f"Total Score: {score}", True, (255, 255, 0))
+        score_rect = score_text.get_rect(center=(Config.WINDOW_WIDTH // 2, Config.WINDOW_HEIGHT // 2 + 60))
+        self.screen.blit(score_text, score_rect)
     
     def render_difficulty_selection(self, panel_x: int, panel_y: int, current_difficulty: str, locked: bool, mouse_pos: Tuple[int, int]):
         """Render difficulty selection buttons"""

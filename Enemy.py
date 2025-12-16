@@ -1,6 +1,4 @@
-# Enemy.py - Enemy Entity Management
 # Handles enemy spawning, movement, and rendering
-
 import pygame
 import math
 from typing import List, Tuple

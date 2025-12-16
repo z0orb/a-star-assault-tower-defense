@@ -1,16 +1,14 @@
-# Config.py - Game Configuration
 # Central configuration for all game parameters
-
 class Config:
     # Display
     WINDOW_WIDTH = 1400
     WINDOW_HEIGHT = 1000
     FPS = 60
     
-    # Map - FULL 32x32 grid harus fit di screen
+    # Map
     MAP_WIDTH = 32
     MAP_HEIGHT = 32
-    TILE_SIZE = 28  # Reduced dari 40 untuk fit 32x32 di screen
+    TILE_SIZE = 28 
     
     # Terrain costs
     TERRAIN_COSTS = {
@@ -38,6 +36,7 @@ class Config:
     BARRICADE_COST = 50
     BARRICADE_RESOURCE_COST = 50
     KILL_REWARD = 20
+    SCORE_PER_KILL = 20
     ENEMY_DAMAGE = 10
     
     # Waves
@@ -52,7 +51,7 @@ class Config:
         'HARD': 15
     }
     
-    # For dynamic waves (beyond pre-defined list), we add this many enemies per wave
+    # For dynamic waves (beyond pre-defined list), add this many enemies per wave
     DYNAMIC_WAVE_SCALING_ADD = 5
     
     # Enemy Scaling
