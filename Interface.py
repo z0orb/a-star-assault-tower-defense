@@ -200,7 +200,7 @@ class InterfaceRenderer:
         instructions = [
             "Instructions:",
             "- Click tower, then map to place",
-            "- Right-click to place barricade",
+            "- Right-click to place barricade ($50)",
             "- Right-click barricade to remove",
             "- Press SPACE to start wave",
             "- Press F11 for fullscreen",
